@@ -19,13 +19,16 @@ private:
     };
 
     SharedPtr<Node> head;
+    WeakPtr<Node> tail;
     size_t length;
 
     void copyFrom(const LinkedList<Type>& otherList)
     {
         SharedPtr<Node> backupHead = head;
+        WeakPtr<Node> backupTail = tail;
         size_t backupLength = length;
         head = nullptr;
+        tail = nullptr;
         length = 0;
         SharedPtr<Node> currentNode = otherList.head;
         try
@@ -40,6 +43,7 @@ private:
         {
             clear();
             head = backupHead;
+            tail = backupTail;
             length = backupLength;
             throw std::bad_alloc();
         }
@@ -48,6 +52,7 @@ private:
     void moveFrom(LinkedList<Type>& otherList)
     {
         head = otherList.head;
+        tail = otherList.tail;
         length = otherList.length;
         otherList.head = nullptr;
         otherList.length = 0;
@@ -61,9 +66,9 @@ private:
         }
     }
 public:
-    LinkedList() : head(nullptr), length(0) {}
+    LinkedList() : head(nullptr), tail(nullptr), length(0) {}
     
-    LinkedList(const Type* items, size_t count) : head(nullptr), length(0)
+    LinkedList(const Type* items, size_t count) : head(nullptr), tail(nullptr), length(0)
     {
         if (count < 0)
         {
@@ -83,12 +88,12 @@ public:
         }
     }
 
-    LinkedList(const LinkedList<Type>& otherList) : head(nullptr), length(0)
+    LinkedList(const LinkedList<Type>& otherList) : head(nullptr), tail(nullptr), length(0)
     {
         copyFrom(otherList);
     }
 
-    LinkedList(LinkedList&& otherList) noexcept : head(nullptr), length(0)
+    LinkedList(LinkedList&& otherList) noexcept : head(nullptr), tail(nullptr), length(0)
     {
         moveFrom(otherList);
     }
@@ -122,11 +127,11 @@ public:
         return get(index);
     }
 
-    LinkedList<Type>& operator+=(LinkedList<Type>& otherList)
-    {
-        concat(otherList);
-        return *this;
-    }
+    // LinkedList<Type>& operator+=(LinkedList<Type>& otherList)
+    // {
+    //     concat(otherList);
+    //     return *this;
+    // }
 
     Type& getFirst()
     {
@@ -152,12 +157,7 @@ public:
         {
             throw std::invalid_argument("Can`t get last element from an empty list.");
         }
-        SharedPtr<Node> currentNode = head;
-        while (currentNode->next != nullptr)
-        {
-            currentNode = currentNode->next;
-        }
-        return currentNode->data;
+        return tail.lock()->data;
     }
 
     const Type& getLast() const
@@ -166,12 +166,7 @@ public:
         {
             throw std::invalid_argument("Can`t get last element from an empty list.");
         }
-        SharedPtr<Node> currentNode = head;
-        while (currentNode->next != nullptr)
-        {
-            currentNode = currentNode->next;
-        }
-        return currentNode->data;
+        return tail.lock()->data;
     }
 
     Type& get(size_t elementIndex) 
@@ -245,7 +240,7 @@ public:
         SharedPtr<Node> newNode(new Node(data));
         if (length == 0)
         {
-            head = newNode;
+            tail = head = newNode;
         }
         else
         {
@@ -261,16 +256,12 @@ public:
         SharedPtr<Node> newNode(new Node(data));
         if (length == 0)
         {
-            head = newNode;
+            tail = head = newNode;
         }
         else
         {
-            SharedPtr<Node> currentNode = head;
-            while (currentNode->next != nullptr)
-            {
-                currentNode = currentNode->next;
-            }
-            currentNode->next = newNode;
+            tail.lock()->next = newNode;
+            tail = newNode;
         }
         length++;
     }
@@ -307,7 +298,7 @@ public:
         }
         else if (length == 1)
         {
-            head = nullptr;
+            tail = head = nullptr;
         }
         else
         {
@@ -325,7 +316,7 @@ public:
         }
         else if (length == 1)
         {
-            head = nullptr;
+            tail = head = nullptr;
         }
         else
         {
@@ -335,55 +326,56 @@ public:
                 currentNode = currentNode->next;
             }
             currentNode->next = nullptr;
+            tail = currentNode;
         }
         length--;
     }
 
-    UniquePtr<LinkedList<Type>> getSubList(int startIndex, int endIndex)
-    {
-        checkIndexRange(startIndex);
-        if (endIndex > length)
-        {
-            throw std::out_of_range("Index out of range.");
-        }
-        if (startIndex >= endIndex)
-        {
-            throw std::logic_error("End index can`t be less then start index.");
-        }
-        auto subsequence = UniquePtr<LinkedList<Type>>(new LinkedList<Type>());
-        for (int index = startIndex; index < endIndex; ++index) 
-        {
-            subsequence->append(get(index));
-        }
-        return subsequence;
-    }
+    // UniquePtr<LinkedList<Type>> getSubList(int startIndex, int endIndex)
+    // {
+    //     checkIndexRange(startIndex);
+    //     if (endIndex > length)
+    //     {
+    //         throw std::out_of_range("Index out of range.");
+    //     }
+    //     if (startIndex >= endIndex)
+    //     {
+    //         throw std::logic_error("End index can`t be less then start index.");
+    //     }
+    //     auto subsequence = UniquePtr<LinkedList<Type>>(new LinkedList<Type>());
+    //     for (int index = startIndex; index < endIndex; ++index) 
+    //     {
+    //         subsequence->append(get(index));
+    //     }
+    //     return subsequence;
+    // }
 
-    void concat(const LinkedList<Type>& otherList)
-    {
-        if (otherList.length == 0)
-        {
-            return;
-        }
-        else
-        {
-            SharedPtr<Node> tail = head;
-            while (tail->next != nullptr)
-            {
-                tail = tail->next;
-            }
-            SharedPtr<Node> currentNode = otherList.head;
-            SharedPtr<Node> newNode(new Node(currentNode->data));
-            tail->next = newNode;
-            while (currentNode->next != nullptr)
-            {
-                tail = tail->next;
-                currentNode = currentNode->next;
-                SharedPtr<Node> newNode(new Node(currentNode->data));
-                tail->next = newNode;
-            }
-            length += otherList.length;
-        }
-    }
+    // void concat(const LinkedList<Type>& otherList)
+    // {
+    //     if (otherList.length == 0)
+    //     {
+    //         return;
+    //     }
+    //     else
+    //     {
+    //         SharedPtr<Node> tail = head;
+    //         while (tail->next != nullptr)
+    //         {
+    //             tail = tail->next;
+    //         }
+    //         SharedPtr<Node> currentNode = otherList.head;
+    //         SharedPtr<Node> newNode(new Node(currentNode->data));
+    //         tail->next = newNode;
+    //         while (currentNode->next != nullptr)
+    //         {
+    //             tail = tail->next;
+    //             currentNode = currentNode->next;
+    //             SharedPtr<Node> newNode(new Node(currentNode->data));
+    //             tail->next = newNode;
+    //         }
+    //         length += otherList.length;
+    //     }
+    // }
 
     void clear()
     {

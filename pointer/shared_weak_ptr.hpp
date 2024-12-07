@@ -283,6 +283,14 @@ public:
 
     WeakPtr<Type>& operator=(WeakPtr<Type>&&) = delete;
 
+    WeakPtr<Type>& operator=(std::nullptr_t)
+    {
+        release();
+        dataPtr = nullptr;
+        counterPtr = nullptr;
+        return *this;
+    }
+
     bool operator==(const WeakPtr<Type>& weakPtr) const
     {
         return dataPtr == weakPtr.dataPtr;
