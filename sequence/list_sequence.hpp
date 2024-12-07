@@ -9,7 +9,7 @@ template <class Type>
 class ListSequence : public Sequence<Type>
 {
 private:
-    SharedPtr<LinkedList<Type>> holder;
+    LinkedList<Type>* holder;
 public:
     ListSequence() : holder(new LinkedList<Type>()) {}
 
@@ -21,6 +21,11 @@ public:
     {
         holder = otherListSequence.holder;
         otherListSequence.holder = nullptr;
+    }
+
+    ~ListSequence()
+    {
+        delete holder;
     }
 
     Type& operator[](size_t index)
@@ -70,6 +75,10 @@ public:
 
     size_t getSize() const override
     {
+        if (holder == nullptr) 
+        {
+            return 0;
+        }
         return holder->getSize();
     }
 

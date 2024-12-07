@@ -177,35 +177,23 @@ public:
         return counterPtr ? counterPtr->getWeakCount() : 0;
     }
 
-    void ensureNotNull() const
-    {
-        if (!dataPtr) 
-        {
-            throw std::runtime_error("A null pointer cannot be dereferenced.");
-        }
-    }
-
     Type* operator->()
     {
-        ensureNotNull();
         return dataPtr;
     }
     
     Type& operator*()
     {
-        ensureNotNull();
         return *dataPtr;
     }
 
     const Type* operator->() const
     {
-        ensureNotNull();
         return dataPtr;
     }
     
     const Type& operator*() const
     {
-        ensureNotNull();
         return *dataPtr;
     }
 };

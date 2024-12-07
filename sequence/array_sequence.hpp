@@ -9,18 +9,23 @@ template <class Type>
 class ArraySequence : public Sequence<Type>
 {
 private:
-    SharedPtr<DynamicArray<Type>> holder;
+    DynamicArray<Type>* holder;
 public:
-    ArraySequence() : holder(new LinkedArray<Type>()) {}
+    ArraySequence(size_t size = 0) : holder(new DynamicArray<Type>(size)) {}
 
-    ArraySequence(const Type* items, size_t count) : holder(new LinkedArray<Type>(items, count)) {}
+    ArraySequence(const Type* items, size_t count) : holder(new DynamicArray<Type>(items, count)) {}
 
-    ArraySequence(const ArraySequence<Type>& otherArraySequence) : holder(new LinkedArray<Type>(*otherArraySequence.holder)) {}
+    ArraySequence(const ArraySequence<Type>& otherArraySequence) : holder(new DynamicArray<Type>(*otherArraySequence.holder)) {}
 
     ArraySequence(ArraySequence<Type>&& otherArraySequence) noexcept
     {
         holder = otherArraySequence.holder;
         otherArraySequence.holder = nullptr;
+    }
+
+    ~ArraySequence()
+    {
+        delete holder;
     }
 
     Type& operator[](size_t index)
@@ -31,11 +36,6 @@ public:
     const Type& operator[](size_t index) const
     {
         return holder->get(index);
-    }
-
-    void operator+=(ArraySequence<Type>& otherArraySequence)
-    {
-        concat(otherArraySequence);
     }
 
     Type& getFirst() override
@@ -70,6 +70,10 @@ public:
 
     size_t getSize() const override
     {
+        if (holder == nullptr) 
+        {
+            return 0;
+        }
         return holder->getSize();
     }
 
@@ -80,7 +84,7 @@ public:
 
     void prepend(const Type& item) override
     {
-        holder->prepend(item);
+        holder->insertAt(item, 0);
     }
 
     void append(const Type& item) override
@@ -95,7 +99,7 @@ public:
 
     void removeFirst() override
     {
-        holder->removeFirst();
+        holder->erase(0);
     }
 
     void removeLast() override
