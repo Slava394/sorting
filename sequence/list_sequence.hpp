@@ -1,12 +1,10 @@
 #pragma once
 #include "sequence/sequence.hpp"
-#include "smart_holder/smart_linked_list.hpp"
-#include "pointer/shared_weak_ptr.hpp"
-#include "pointer/unique_ptr.hpp"
+#include "holder/linked_list.hpp"
 
 
 template <class Type>
-class ListSequence : public Sequence<Type>
+class ListSequence : public ISequence<Type>
 {
 private:
     LinkedList<Type>* holder;
@@ -36,11 +34,6 @@ public:
     const Type& operator[](size_t index) const
     {
         return holder->get(index);
-    }
-
-    void operator+=(ListSequence<Type>& otherListSequence)
-    {
-        concat(otherListSequence);
     }
 
     Type& getFirst() override
@@ -115,18 +108,5 @@ public:
     void erase(size_t index) override
     {
         holder->erase(index);
-    }
-
-    void concat(const Sequence<Type>& otherSequence)
-    {
-        const ListSequence<Type>* otherListSequencePtr = dynamic_cast<const ListSequence<Type>*>(&otherSequence);
-        if (otherListSequencePtr) 
-        {
-            holder->concat(*otherListSequencePtr->holder);
-        } 
-        else 
-        {
-            throw std::invalid_argument("Expected a ListSequence.");
-        }
     }
 };

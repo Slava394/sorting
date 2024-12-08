@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 
-template<typename Type>
+template <typename Type>
 class UniquePtr
 {
 private:

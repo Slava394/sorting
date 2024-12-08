@@ -1,10 +1,8 @@
 #pragma  once
-#include <stdexcept>
-#include "pointer/unique_ptr.hpp"
 
 
 template <class Type>
-class Sequence
+class ISequence
 {
 public:
     virtual Type& getFirst() = 0;
@@ -35,5 +33,5 @@ public:
 
     virtual void erase(size_t index) = 0;
 
-    virtual ~Sequence() = default;
+    virtual ~ISequence() = default;
 };

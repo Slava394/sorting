@@ -5,7 +5,7 @@
 
 
 template <class Type>
-class DynamicArray
+class Vector
 {
 private:
     UniqueArray<Type> data;
@@ -67,12 +67,12 @@ private:
         }
     }
 public:
-    explicit DynamicArray(size_t length = 0) : data(nullptr), allocatedMemory(length), size(length)
+    explicit Vector(size_t length = 0) : data(nullptr), allocatedMemory(length), size(length)
     {
         data = UniqueArray<Type>(new Type[length]);
     }
 
-    DynamicArray(const Type* items, size_t count) : data(nullptr), allocatedMemory(count), size(count)
+    Vector(const Type* items, size_t count) : data(nullptr), allocatedMemory(count), size(count)
     {
         data = UniqueArray<Type>(new Type[count]);
         for (size_t index = 0; index < count; ++index)
@@ -81,7 +81,7 @@ public:
         }
     }
 
-    DynamicArray(const DynamicArray<Type>& otherArray) 
+    Vector(const Vector<Type>& otherArray) 
         : data(nullptr),
           allocatedMemory(otherArray.allocatedMemory),
           size(otherArray.size)
@@ -96,7 +96,7 @@ public:
         }
     }
 
-    DynamicArray(DynamicArray<Type>&& otherArray) noexcept 
+    Vector(Vector<Type>&& otherArray) noexcept 
         : data(std::move(otherArray.data)),
           allocatedMemory(otherArray.allocatedMemory),
           size(otherArray.size)
@@ -106,7 +106,7 @@ public:
         otherArray.size = 0;
     }
 
-    DynamicArray<Type>& operator=(const DynamicArray<Type>& otherArray)
+    Vector<Type>& operator=(const Vector<Type>& otherArray)
     {
         if (this != &otherArray)
         {
@@ -126,7 +126,7 @@ public:
         return *this;
     }
 
-    DynamicArray<Type>& operator=(DynamicArray<Type>&& otherArray) noexcept
+    Vector<Type>& operator=(Vector<Type>&& otherArray) noexcept
     {
         if (this != &otherArray)
         {
@@ -150,7 +150,7 @@ public:
         return get(index);
     }
 
-    ~DynamicArray()
+    ~Vector()
     {
         clear();
     }

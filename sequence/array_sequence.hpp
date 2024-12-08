@@ -1,21 +1,19 @@
 #pragma once
 #include "sequence/sequence.hpp"
-#include "smart_holder/smart_vector.hpp"
-#include "pointer/shared_weak_ptr.hpp"
-#include "pointer/unique_ptr.hpp"
+#include "holder/vector.hpp"
 
 
 template <class Type>
-class ArraySequence : public Sequence<Type>
+class ArraySequence : public ISequence<Type>
 {
 private:
-    DynamicArray<Type>* holder;
+    Vector<Type>* holder;
 public:
-    ArraySequence(size_t size = 0) : holder(new DynamicArray<Type>(size)) {}
+    ArraySequence(size_t size = 0) : holder(new Vector<Type>(size)) {}
 
-    ArraySequence(const Type* items, size_t count) : holder(new DynamicArray<Type>(items, count)) {}
+    ArraySequence(const Type* items, size_t count) : holder(new Vector<Type>(items, count)) {}
 
-    ArraySequence(const ArraySequence<Type>& otherArraySequence) : holder(new DynamicArray<Type>(*otherArraySequence.holder)) {}
+    ArraySequence(const ArraySequence<Type>& otherArraySequence) : holder(new Vector<Type>(*otherArraySequence.holder)) {}
 
     ArraySequence(ArraySequence<Type>&& otherArraySequence) noexcept
     {

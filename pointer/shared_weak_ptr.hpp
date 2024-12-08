@@ -58,7 +58,7 @@ public:
 };
 
 
-template<typename Type>
+template <typename Type>
 class WeakPtr;
 
 
@@ -199,7 +199,7 @@ public:
 };
 
 
-template<typename Type>
+template <typename Type>
 class WeakPtr
 {
     friend class SharedPtr<Type>;
