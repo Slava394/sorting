@@ -1,5 +1,5 @@
 #pragma once
-#include "sequence/sequence.hpp"
+#include "collection/sequence.hpp"
 #include "holder/linked_list.hpp"
 
 

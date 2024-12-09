@@ -5,6 +5,10 @@ template <class Type>
 class ISequence
 {
 public:
+    virtual Type& operator[](size_t index) = 0;
+
+    virtual const Type& operator[](size_t index) const = 0;
+
     virtual Type& getFirst() = 0;
 
     virtual Type& getLast() = 0;

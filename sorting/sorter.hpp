@@ -1,5 +1,10 @@
 #pragma once
+#include "collection/sequence.hpp"
 
 
 template <typename Type>
-class 
+class ISorter
+{
+public:
+    virtual void sort(ISequence<Type>& sequence) = 0;
+};
