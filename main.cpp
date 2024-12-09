@@ -2,24 +2,19 @@
 #include <cassert>
 #include <complex>
 #include "sorting/quick_sorter.hpp"
+#include "sorting/shell_sorter.hpp"
+#include "sorting/heap_sorter.hpp"
 #include "collection/array_sequence.hpp"
+#include "collection/list_sequence.hpp"
 
 
-short sorter(std::complex<int>& a, std::complex<int>& b)
+short sorter(const int& a, const int& b)
 {
-    if (a.real() > b.real())
+    if (a > b)
     {
         return -1;
     }
-    if (a.real() < b.real())
-    {
-        return 1;
-    }
-    if (a.imag() > b.imag())
-    {
-        return -1;
-    }
-    if (a.imag() < b.imag())
+    if (a < b)
     {
         return 1;
     }
@@ -29,14 +24,14 @@ short sorter(std::complex<int>& a, std::complex<int>& b)
 
 int main()
 {
-    std::complex<int>* arr = new std::complex<int>[6]{{1, 3}, {2, 3}, {4 ,3} ,{5 ,3} ,{6 ,3} ,{1, 1}};
-    ArraySequence<std::complex<int>> seq(arr, 6);
+    int* arr = new int[7]{8, 3, 3, 2, 2, 6, 1};
+    ListSequence<int> seq(arr, 7);
     delete[] arr;
-    QuickSorter<std::complex<int>> quickSort(sorter);
-    quickSort.sort(seq);
+    HeapSorter<int> shellSort(sorter);
+    shellSort.sort(seq);
     for (size_t i = 0; i < seq.getSize(); ++i)
     {
-        std::cout << seq.get(i).real() << " " <<  seq.get(i).imag() << std::endl;
+        std::cout << seq.get(i) << " ";
     }
     std::cout << std::endl;
     return 0;
